@@ -32,7 +32,8 @@ from datetime import datetime
 from math import log
 
 
-eventlog = "helpdesk.csv"
+# eventlog = "helpdesk.csv"
+eventlog = "WFM-separated-to-teste.csv"
 
 ########################################################################################
 #
@@ -60,7 +61,7 @@ next(spamreader, None)  # skip the headers
 ascii_offset = 161
 
 for row in spamreader: #the rows are "CaseID,ActivityID,CompleteTimestamp"
-    t = time.strptime(row[2], "%Y-%m-%d %H:%M:%S") #creates a datetime object from row[2]
+    t = time.strptime(row[2], "%Y-%m-%d %H:%M:%S") #creates a datetime object from row[2] (CompleteTimestamp)
     if row[0]!=lastcase:  #'lastcase' is to save the last executed case for the loop
         casestarttime = t
         lasteventtime = t
@@ -73,10 +74,10 @@ for row in spamreader: #the rows are "CaseID,ActivityID,CompleteTimestamp"
         times = []
         times2 = []
         numlines+=1
-    line+=unichr(int(row[1])+ascii_offset)
-    timesincelastevent = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(lasteventtime))
-    timesincecasestart = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(casestarttime))
-    timediff = 86400 * timesincelastevent.days + timesincelastevent.seconds
+    line+=unichr(int(row[1])+ascii_offset) #save the unicode for the ActivityID
+    timesincelastevent = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(lasteventtime)) #calculates the time since the last event
+    timesincecasestart = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(casestarttime)) #calculate the time since the case start and the current event
+    timediff = 86400 * timesincelastevent.days + timesincelastevent.seconds #Transform Days into seconds and calculates the difference
     timediff2 = 86400 * timesincecasestart.days + timesincecasestart.seconds
     times.append(timediff)
     times2.append(timediff2)
@@ -306,7 +307,8 @@ for i, sentence in enumerate(sentences):
         else:
             y_a[i, target_char_indices[c]] = softness/(len(target_chars)-1)
     y_t[i] = next_t/divisor
-    np.set_printoptions(threshold=np.nan)
+    # np.set_printoptions(threshold=np.nan)
+    np.set_printoptions()
 
 # build the model: 
 print('Build model...')
